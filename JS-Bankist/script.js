@@ -62,9 +62,13 @@ const inputCloseUsername = document.querySelector('.form__input--user');
 const inputClosePin = document.querySelector('.form__input--pin');
 
 //Tao lich su giao dich
-const displayMovement = function (movement) {
+const displayMovement = function (movement, sort = false) {
+  const movs = sort
+    ? currentAccount.movements.slice().sort((a, b) => a - b)
+    : movement;
+
   containerMovements.innerHTML = '';
-  movement.forEach(function (value, index) {
+  movs.forEach(function (value, index) {
     //Lam trong danh sach
     const type = value > 0 ? 'deposit' : 'withdrawal';
     //Tao phan tu html
@@ -93,41 +97,142 @@ const createUsername = function (acc) {
 };
 
 // Tinh so du
-const calculateBalance = mov => {
-  const balance = mov.reduce((acc, ele) => acc + ele, 0);
-  labelBalance.textContent = balance + '€';
+const calculateBalance = acc => {
+  acc.balance = acc.movements.reduce((accu, ele) => accu + ele, 0);
+  labelBalance.textContent = `${acc.balance}€`;
 };
 
 //Tinh tong hien thi
-const calDisplaySummary = mov => {
-  const inSummary = mov
+const calDisplaySummary = acc => {
+  const inSummary = acc.movements
     .filter(cur => cur >= 0)
     .reduce((acc, cur) => acc + cur, 0);
 
-  const outSummary = mov
+  const outSummary = acc.movements
     .filter(cur => cur < 0)
+    .reduce((acc, cur) => acc + cur, 0);
+
+  const intSummary = acc.movements
+    .filter(cur => cur >= 0)
+    .map(cur => (cur * acc.interestRate) / 100)
     .reduce((acc, cur) => acc + cur, 0);
 
   labelSumIn.textContent = `${inSummary}€`;
   labelSumOut.textContent = `${Math.abs(outSummary)}€`;
+  labelSumInterest.textContent = `${intSummary}€`;
 };
-// Chay cac ham
-displayMovement(account1.movements);
-createUsername(accounts);
-calculateBalance(account1.movements);
-calDisplaySummary(account1.movements);
+// Reset UI
+const updateUI = currentAccount => {
+  displayMovement(currentAccount.movements);
+  calculateBalance(currentAccount);
+  calDisplaySummary(currentAccount);
+};
+// Xu ly su kien dang nhap
+let currentAccount;
 
+btnLogin.addEventListener('click', function (e) {
+  e.preventDefault();
+
+  currentAccount = accounts.find(
+    cur => cur.userName === inputLoginUsername.value
+  );
+
+  if (currentAccount?.pin === Number(inputLoginPin.value)) {
+    // Xu ly UI co ban
+    labelWelcome.textContent = `Welcome back, ${
+      currentAccount.owner.split(' ')[0]
+    }`;
+
+    containerApp.style.opacity = 1;
+    // Xu ly cac o hien thi
+    inputLoginUsername.value = inputLoginPin.value = '';
+    inputLoginPin.blur();
+    // Xu ly giao dien lien quan toi giao dich
+    updateUI(currentAccount);
+  }
+});
+// Xu ly su kien chuyen tien
+btnTransfer.addEventListener('click', function (e) {
+  e.preventDefault();
+
+  const user = accounts.find(acc => acc.userName === inputTransferTo.value);
+  const amount = Number(inputTransferAmount.value);
+
+  console.log(user, amount);
+  if (
+    amount > 0 &&
+    amount <= currentAccount.balance &&
+    user?.userName !== currentAccount.userName
+  ) {
+    // Xu ly chuyen khoan
+    currentAccount.movements.push(-amount);
+    user.movements.push(amount);
+    updateUI(currentAccount);
+
+    // Lam trong o nhap
+    inputTransferAmount.value = inputTransferTo.value = '';
+    inputTransferAmount.blur();
+  }
+});
+// Xu ly su kien xoa tai khoan
+btnClose.addEventListener('click', function (e) {
+  e.preventDefault();
+
+  if (
+    inputCloseUsername.value === currentAccount.userName &&
+    Number(inputClosePin.value) === currentAccount.pin
+  ) {
+    const currentAccIndex = accounts.findIndex(
+      cur => cur.userName === inputCloseUsername.value
+    );
+
+    accounts.splice(currentAccIndex, 1);
+
+    inputCloseUsername = inputClosePin = '';
+    inputClosePin.blur();
+
+    containerApp.style.opacity = 100;
+  }
+});
+// Xu ly su kien loan
+btnLoan.addEventListener('click', function (e) {
+  e.preventDefault();
+  const amount = Number(inputLoanAmount.value);
+  if (
+    amount > 0 &&
+    currentAccount.movements.some(
+      cur => cur >= Number(inputLoanAmount.value) * 0.1
+    )
+  ) {
+    currentAccount.movements.push(amount);
+    updateUI(currentAccount);
+
+    inputLoanAmount = '';
+    inputLoanAmount.blur();
+  }
+});
+
+// Xu ly su kien sorting
+let sorted = false;
+btnSort.addEventListener('click', function (e) {
+  e.preventDefault();
+
+  displayMovement(currentAccount.movements, !sorted);
+  sorted = !sorted;
+});
+// Chay cac ham
+createUsername(accounts);
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
 // LECTURES
 
-const currencies = new Map([
-  ['USD', 'United States dollar'],
-  ['EUR', 'Euro'],
-  ['GBP', 'Pound sterling'],
-]);
+// const currencies = new Map([
+//   ['USD', 'United States dollar'],
+//   ['EUR', 'Euro'],
+//   ['GBP', 'Pound sterling'],
+// ]);
 
-const movements = [200, 450, -400, 3000, -650, -130, 70, 1300];
+// const movements = [200, 450, -400, 3000, -650, -130, 70, 1300];
 
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
@@ -360,3 +465,358 @@ TEST DATA 2: [16, 6, 10, 5, 6, 1, 4]
 
 // console.log(calcAverageHumanAge([5, 2, 4, 1, 15, 8, 3]));
 // console.log(calcAverageHumanAge([16, 6, 10, 5, 6, 1, 4]));
+///////////////////////////////////////
+// The Magic of Chaining Methods
+// const eurToUsd = 1.1;
+// console.log(movements);
+
+// // PIPELINE
+// const totalDepositsUSD = movements
+//   .filter(mov => mov > 0)
+//   .map((mov, i, arr) => {
+//     // console.log(arr);
+//     return mov * eurToUsd;
+//   })
+//   // .map(mov => mov * eurToUsd)
+//   .reduce((acc, mov) => acc + mov, 0);
+// console.log(totalDepositsUSD);
+
+///////////////////////////////////////
+// Coding Challenge #3
+
+/* 
+Rewrite the 'calcAverageHumanAge' function from the previous challenge, but this time as an arrow function, and using chaining!
+
+TEST DATA 1: [5, 2, 4, 1, 15, 8, 3]
+TEST DATA 2: [16, 6, 10, 5, 6, 1, 4]
+
+GOOD LUCK 😀
+*/
+// const calcAverageHumanAge = ages => {
+//   const cal =
+//     ages
+//       .map(cur => (cur <= 2 ? cur * 2 : 16 + cur * 4))
+//       .filter(cur => cur >= 18)
+//       .reduce((acc, cur) => acc + cur, 0) / ages.length;
+
+//   return cal;
+// };
+//============================================
+///////////////////////////////////////
+// The find Method
+// const firstWithdrawal = movements.find(mov => mov < 0);
+// console.log(movements);
+// console.log(firstWithdrawal);
+
+// console.log(accounts);
+
+// const account = accounts.find(acc => acc.owner === 'Jessica Davis');
+// console.log(account);
+
+///////////////////////////////////////
+// The New findLast and findLastIndex Methods
+
+// console.log(movements);
+// const lastWithdrawal = movements.findLast(mov => mov < 0);
+// console.log(lastWithdrawal);
+
+// // 'Your latest large movement was X movements ago'
+
+// const latestLargeMovementIndex = movements.findLastIndex(
+//   mov => Math.abs(mov) > 1000
+// );
+// console.log(latestLargeMovementIndex);
+// console.log(
+//   `Your latest large movement was ${
+//     movements.length - latestLargeMovementIndex
+//   } movements ago`
+// );
+
+///////////////////////////////////////
+// some and every
+// console.log(movements);
+
+// // EQUALITY
+// console.log(movements.includes(-130));
+
+// // SOME: CONDITION
+// console.log(movements.some(mov => mov === -130));
+
+// const anyDeposits = movements.some(mov => mov > 0);
+// console.log(anyDeposits);
+
+// // EVERY
+// console.log(movements.every(mov => mov > 0));
+// // console.log(account4.movements.every(mov => mov > 0));
+
+// Separate callback
+// const deposit = mov => mov > 0;
+// console.log(movements.some(deposit));
+// console.log(movements.every(deposit));
+// console.log(movements.filter(deposit));
+
+///////////////////////////////////////
+// flat and flatMap
+// const arr = [[1, 2, 3], [4, 5, 6], 7, 8];
+// console.log(arr.flat());
+
+// const arrDeep = [[[1, 2], 3], [4, [5, 6]], 7, 8];
+// console.log(arrDeep.flat(2));
+
+// flat
+// const overalBalance = accounts
+//   .map(acc => acc.movements)
+//   .flat()
+//   .reduce((acc, mov) => acc + mov, 0);
+// console.log(overalBalance);
+
+// flatMap
+// const overalBalance2 = accounts
+//   .flatMap(acc => acc.movements)
+//   .reduce((acc, mov) => acc + mov, 0);
+// console.log(overalBalance2);
+
+///////////////////////////////////////
+// Coding Challenge #4
+
+/*
+This time, Julia and Kate are studying the activity levels of different dog breeds.
+
+YOUR TASKS:
+1. Store the the average weight of a "Husky" in a variable "huskyWeight"
+2. Find the name of the only breed that likes both "running" and "fetch" ("dogBothActivities" variable)
+3. Create an array "allActivities" of all the activities of all the dog breeds
+4. Create an array "uniqueActivities" that contains only the unique activities (no activity repetitions). HINT: Use a technique with a special data structure that we studied a few sections ago.
+5. Many dog breeds like to swim. What other activities do these dogs like? Store all the OTHER activities these breeds like to do, in a unique array called "swimmingAdjacent".
+6. Do all the breeds have an average weight of 10kg or more? Log to the console whether "true" or "false".
+7. Are there any breeds that are "active"? "Active" means that the dog has 3 or more activities. Log to the console whether "true" or "false".
+
+BONUS: What's the average weight of the heaviest breed that likes to fetch? HINT: Use the "Math.max" method along with the ... operator.
+
+TEST DATA:
+*/
+// const breeds = [
+//   {
+//     breed: 'German Shepherd',
+//     averageWeight: 32,
+//     activities: ['fetch', 'swimming'],
+//   },
+//   {
+//     breed: 'Dalmatian',
+//     averageWeight: 24,
+//     activities: ['running', 'fetch', 'agility'],
+//   },
+//   {
+//     breed: 'Labrador',
+//     averageWeight: 28,
+//     activities: ['swimming', 'fetch'],
+//   },
+//   {
+//     breed: 'Beagle',
+//     averageWeight: 12,
+//     activities: ['digging', 'fetch'],
+//   },
+//   {
+//     breed: 'Husky',
+//     averageWeight: 26,
+//     activities: ['running', 'agility', 'swimming'],
+//   },
+//   {
+//     breed: 'Bulldog',
+//     averageWeight: 36,
+//     activities: ['sleeping'],
+//   },
+//   {
+//     breed: 'Poodle',
+//     averageWeight: 18,
+//     activities: ['agility', 'fetch'],
+//   },
+// ];
+
+// 1.
+// const huskyWeight = breeds.find(cur => cur.breed === 'Husky').averageWeight;
+// console.log(huskyWeight);
+//--------------------------
+// 2.
+// const dogBothActivities = breeds.find(
+//   cur => cur.activities.includes('running') && cur.activities.includes('fetch')
+// ).breed;
+// console.log(dogBothActivities);
+//-------------------------
+// 3.
+// const allActivities = breeds.flatMap(cur => cur.activities);
+// console.log(allActivities);
+//-------------------------
+//4.
+// const uniqueActivities = [...new Set(allActivities)];
+// console.log(uniqueActivities);
+// 5.
+// const swimmingAdjacent = [
+//   ...new Set(
+//     breeds
+//       .filter(cur => cur.activities.includes('swimming'))
+//       .flatMap(cur => cur.activities)
+//       .filter(cur => cur !== 'swimming')
+//   ),
+// ];
+
+// console.log(swimmingAdjacent);
+//---------------------------------------
+// 6.
+// console.log(breeds.every(cur => cur.averageWeight > 10));
+//---------------------------------------
+// 7.
+// console.log(breeds.some(cur => cur.activities.length >= 3));
+//========================================
+///////////////////////////////////////
+// Sorting Arrays
+
+// Strings
+// const owners = ['Jonas', 'Zach', 'Adam', 'Martha'];
+// console.log(owners.sort());
+// console.log(owners);
+
+// // Numbers
+// console.log(movements);
+
+// return < 0, A, B (keep order)
+// return > 0, B, A (switch order)
+
+// Ascending
+// movements.sort((a, b) => {
+//   if (a > b) return 1;
+//   if (a < b) return -1;
+// });
+// movements.sort((a, b) => a - b);
+// console.log(movements);
+
+// Descending
+// movements.sort((a, b) => {
+//   if (a > b) return -1;
+//   if (a < b) return 1;
+// });
+// movements.sort((a, b) => b - a);
+// console.log(movements);
+
+///////////////////////////////////////
+// Array Grouping
+
+// console.log(movements);
+
+// const groupedMovements = Object.groupBy(movements, movement =>
+//   movement > 0 ? 'deposits' : 'withdrawals'
+// );
+// console.log(groupedMovements);
+
+// const groupedByActivity = Object.groupBy(accounts, account => {
+//   const movementCount = account.movements.length;
+
+//   if (movementCount >= 8) return 'very active';
+//   if (movementCount >= 4) return 'active';
+//   if (movementCount >= 1) return 'moderate';
+//   return 'inactive';
+// });
+// console.log(groupedByActivity);
+
+// const groupedAccounts = Object.groupBy(accounts, account => account.type);
+// const groupedAccounts = Object.groupBy(accounts, ({ type }) => type);
+// console.log(groupedAccounts);
+
+///////////////////////////////////////
+// More Ways of Creating and Filling Arrays
+// const arr = [1, 2, 3, 4, 5, 6, 7];
+// console.log(new Array(1, 2, 3, 4, 5, 6, 7));
+
+// Empty arrays + fill method
+// const x = new Array(7);
+// console.log(x);
+// console.log(x.map(() => 5));
+// x.fill(1, 3, 5);
+// x.fill(1);
+// console.log(x);
+
+// arr.fill(23, 2, 6);
+// console.log(arr);
+
+// // Array.from
+// const y = Array.from({ length: 7 }, () => 1);
+// console.log(y);
+
+// const z = Array.from({ length: 7 }, (_, i) => i + 1);
+// console.log(z);
+
+// labelBalance.addEventListener('click', function () {
+//   const movementsUI = Array.from(
+//     document.querySelectorAll('.movements__value'),
+//     el => Number(el.textContent.replace('€', ''))
+//   );
+//   console.log(movementsUI);
+
+//   const movementsUI2 = [...document.querySelectorAll('.movements__value')];
+// });
+
+///////////////////////////////////////
+// Non-Destructive Alternatives: toReversed, toSorted, toSpliced, with
+
+// console.log(movements);
+// const reversedMov = movements.toReversed();
+// console.log(reversedMov);
+
+// // toSorted (sort), toSpliced (splice)
+
+// // movements[1] = 2000;
+// const newMovements = movements.with(1, 2000);
+// console.log(newMovements);
+
+// console.log(movements);
+//======================================
+// Array practice
+// 1.
+// const bankDepositSum = accounts
+//   .flatMap(acc => acc.movements)
+//   .filter(mov => mov > 0)
+//   .reduce((sum, cur) => sum + cur, 0);
+
+// console.log(bankDepositSum);
+//---------------------------------------
+// 2.
+// const numDeposits1000 = accounts
+//   .flatMap(acc => acc.movements)
+//   .filter(mov => mov >= 1000).length;
+
+// const numDeposits1000 = accounts
+//   .flatMap(acc => acc.movements)
+//   .reduce((count, cur) => (cur >= 1000 ? count + 1 : count), 0);
+// console.log(numDeposits1000);
+// 3. Create an object with sum of deposit and withdrawals
+// const sums = accounts
+//   .flatMap(acc => acc.movements)
+//   .reduce(
+//     (sums, cur) => {
+//       // cur >= 0 ? (sums.deposit += cur) : (sums.withdrawals += cur);
+//       sums[cur >= 0 ? 'deposit' : 'withdrawals'] += cur;
+//       return sums;
+//     },
+//     {
+//       deposit: 0,
+//       withdrawals: 0,
+//     }
+//   );
+
+// console.log(sums);
+//-----------------------------------------
+// 4.
+const convertTitleCase = function (title) {
+  const exceptions = ['a', 'an', 'the', 'but', 'or', 'on', 'in', 'with'];
+  
+  const titleArr = title
+    .toLowerCase()
+    .split(' ')
+    .map(cur => cur[0].toUpperCase() + cur.slice(1))
+    .join(' ');
+
+  console.log(titleArr);
+};
+
+convertTitleCase('this is a nice title case');
+convertTitleCase('this is a LONG title but not too long');
