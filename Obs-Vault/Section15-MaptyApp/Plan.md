@@ -2,7 +2,7 @@
 
 ### Tổng Quan về Quy Trình Lập Kế Hoạch
 
-[Project planning](/md_assets/Project-Planning.png)
+![Project planning](/md_assets/Project-Planning.png)
 
 - Lập kế hoạch là bước quan trọng trước khi bắt đầu phát triển dự án, đặc biệt với các dự án phức tạp.
 - Quy trình lập kế hoạch bao gồm:
