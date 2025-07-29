@@ -59,7 +59,7 @@
 - **Tệp CSS**:
   - Định dạng giao diện, có thể tùy chỉnh để cải thiện trải nghiệm người dùng.
 
-[Architecture](/JS-MaptyApp/Mapty-architecture-final.png)
+![Architecture](/JS-MaptyApp/Mapty-architecture-final.png)
 
 - **Sơ đồ luồng (Flowchart) và kiến trúc**:
   - Sẽ được giải thích chi tiết trong bài giảng tiếp theo.
@@ -67,7 +67,7 @@
 
 #### 5. Quy trình phát triển
 
-[flowchart](/JS-MaptyApp/Mapty-flowchart.png)
+![flowchart](/JS-MaptyApp/Mapty-flowchart.png)
 
 - **Lập kế hoạch**:
   - Xây dựng sơ đồ luồng (flowchart) để xác định các bước thực hiện.
