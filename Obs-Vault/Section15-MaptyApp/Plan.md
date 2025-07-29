@@ -13,7 +13,7 @@
 
 ### Câu Chuyện Người Dùng (User Stories)
 
-[User story](/md_assets/User-story.png)
+![User story](/md_assets/User-story.png)
 
 - **Định nghĩa**: Mô tả chức năng ứng dụng từ góc độ người dùng, trả lời các câu hỏi: Ai? Làm gì? Tại sao?
 - **Định dạng**: "Là một [loại người dùng], tôi muốn [thực hiện hành động] để [đạt được lợi ích]."
@@ -26,7 +26,7 @@
 
 ### Tính Năng Cần Thiết
 
-[Features](/md_assets/Features.png)
+![Features](/md_assets/Features.png)
 Dựa trên các câu chuyện người dùng, các tính năng cần triển khai bao gồm:
 
 - **Bản đồ (Map)**:
@@ -46,7 +46,7 @@ Dựa trên các câu chuyện người dùng, các tính năng cần triển kh
 
 ### Biểu Đồ Luồng (Flowchart)
 
-[Flow chart](/JS-MaptyApp/Mapty-flowchart.png)
+![Flow chart](/JS-MaptyApp/Mapty-flowchart.png)
 
 - **Mục đích**: Hình dung các hành động người dùng, phản ứng của chương trình, và luồng dữ liệu.
 - **Cấu trúc biểu đồ luồng**:
@@ -68,7 +68,7 @@ Dựa trên các câu chuyện người dùng, các tính năng cần triển kh
 
 ### Kiến Trúc Dự Án (Project Architecture)
 
-[Project architecture](/JS-MaptyApp/Mapty-architecture-final.png)
+![Project architecture](/JS-MaptyApp/Mapty-architecture-final.png)
 
 - **Định nghĩa**: Cách tổ chức mã nguồn và các tính năng JavaScript sẽ sử dụng để triển khai các tính năng.
 - **Nguyên tắc**:
