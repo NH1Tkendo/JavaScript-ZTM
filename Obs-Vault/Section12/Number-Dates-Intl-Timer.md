@@ -8,3 +8,7 @@ Trong chương này chứa các ghi chép về nội dung này
 ##Numeric Separators [[Numeric-Separators]]
 ##BigInt [[BigInt]]
 ##DateTime [[DateTime]]
+##Operation With Date [[Operation-With-Date]]
+##Internationalizing Dates [[Internationalizing-Dates]]
+##Internationalizing Numbers [[Internationalizing-Numbers]]
+##Timers [[Timers]]

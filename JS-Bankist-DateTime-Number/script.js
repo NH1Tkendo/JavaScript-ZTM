@@ -16,7 +16,7 @@ const account1 = {
   pin: 1111,
 
   movementsDates: [
-    '2019-11-18T21:31:17.178Z',
+    '2025-07-25T21:31:17.178Z',
     '2019-12-23T07:42:02.383Z',
     '2020-01-28T09:15:04.904Z',
     '2020-04-01T10:17:24.185Z',
@@ -82,28 +82,52 @@ const inputClosePin = document.querySelector('.form__input--pin');
 // UI
 
 // Functions
+const createOutputDate = date => {
+  const countDate = (date1, date2) =>
+    Math.round(Math.abs(date2 - date1) / (1000 * 60 * 60 * 24));
+
+  const getDayAgo = countDate(new Date(), date);
+
+  if (getDayAgo === 0) return 'Today';
+  else if (getDayAgo === 1) return 'Yesterday';
+  else if (getDayAgo <= 7) return `${getDayAgo} days ago`;
+
+  const year = date.getFullYear();
+  const month = date.getMonth() + 1;
+  const day = date.getDate();
+
+  return `${day}/${month}/${year}`;
+};
 const displayMovements = function (acc, sort = false) {
   containerMovements.innerHTML = '';
 
-  const movs = sort
-    ? acc.movements.slice().sort((a, b) => a - b)
-    : acc.movements;
+  const movs = acc.movements.map((cur, i) => ({
+    movements: cur,
+    movementDate: acc.movementsDates.at(i),
+  }));
 
-  movs.forEach(function (mov, i) {
+  if (sort) movs.sort((a, b) => a.movements - b.movements);
+
+  movs.forEach(function (obj, i) {
+    const { movements: mov, movementDate: movDate } = obj;
+
     const type = mov > 0 ? 'deposit' : 'withdrawal';
 
-    const date = new Date(currentAccount.movementsDates[i]);
-    const year = date.getFullYear();
-    const month = date.getMonth() + 1;
-    const day = date.getDate();
+    const date = new Date(movDate);
 
+    const outputDate = createOutputDate(date);
+
+    const formattedMov = new Intl.NumberFormat(navigator.locale, {
+      style: 'currency',
+      currency: 'VND',
+    }).format(mov);
     const html = `
       <div class="movements__row">
         <div class="movements__type movements__type--${type}">${
       i + 1
     } ${type}</div>
-        <div class="movements__date">${day}/${month}/${year}</div>
-        <div class="movements__value">${mov.toFixed(2)}€</div>
+        <div class="movements__date">${outputDate}</div>
+        <div class="movements__value">${formattedMov}</div>
       </div>
     `;
 
@@ -160,13 +184,33 @@ const updateUI = function (acc) {
   calcDisplaySummary(acc);
 };
 
+const updateTimer = function () {
+  let time = 10;
+
+  const tick = () => {
+    const min = String(Math.trunc(time / 60)).padStart(2, 0);
+    const sec = String(time % 60).padStart(2, 0);
+
+    labelTimer.textContent = `${min}:${sec}`;
+
+    if (time === 0) {
+      clearInterval(timer);
+      labelWelcome.textContent = `Log in to use the app`;
+      containerApp.style.opacity = 0;
+    }
+
+    time--;
+  };
+
+  tick();
+  const timer = setInterval(tick, 1000);
+
+  return timer;
+};
+
 ///////////////////////////////////////
 // Event handlers
-let currentAccount;
-
-currentAccount = account1; // For testing purposes
-updateUI(currentAccount);
-containerApp.style.opacity = 100;
+let currentAccount, timer;
 
 btnLogin.addEventListener('click', function (e) {
   // Prevent form from submitting
@@ -196,6 +240,9 @@ btnLogin.addEventListener('click', function (e) {
 
     labelDate.textContent = `${day}/${month}/${year}`;
     // Update UI
+    if (timer) clearInterval(timer);
+    timer = updateTimer();
+
     updateUI(currentAccount);
   }
 });
@@ -217,8 +264,8 @@ btnTransfer.addEventListener('click', function (e) {
     // Doing the transfer
     currentAccount.movements.push(-amount);
     receiverAcc.movements.push(amount);
-    currentAccount.movementsDates.push(new Date());
-    receiverAcc.movementsDates.push(new Date());
+    currentAccount.movementsDates.push(new Date().toISOString());
+    receiverAcc.movementsDates.push(new Date().toISOString());
 
     // Update UI
     updateUI(currentAccount);
@@ -232,7 +279,7 @@ btnLoan.addEventListener('click', function (e) {
   if (amount > 0 && currentAccount.movements.some(mov => mov >= amount * 0.1)) {
     // Add movement
     currentAccount.movements.push(amount);
-
+    currentAccount.movementsDates.push(new Date().toISOString());
     // Update UI
     updateUI(currentAccount);
   }
@@ -265,10 +312,53 @@ btnClose.addEventListener('click', function (e) {
 let sorted = false;
 btnSort.addEventListener('click', function (e) {
   e.preventDefault();
-  displayMovements(currentAccount.movements, !sorted);
+  displayMovements(currentAccount, !sorted);
   sorted = !sorted;
 });
 
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
 // LECTURES
+// Cu phap co ban cua internationalizing dates
+// const options = {
+//   hour: 'numeric',
+//   minute: 'numeric',
+//   day: 'numeric',
+//   month: 'long', // hoặc 'numeric', '2-digit'
+//   year: 'numeric', // hoặc '2-digit'
+//   weekday: 'long', // hoặc 'short',iaus 'narrow'
+// };
+//--------------------------------------
+// console.log(
+//   new Intl.DateTimeFormat(navigator.language, options).format(new Date())
+// );
+//-------------------------------------
+// Locale dong
+// console.log(navigator.language);
+//=====================================
+// Internationalizing Number
+// console.log(Intl.NumberFormat(navigator.locale).format(3));
+
+// const number = 3884000.235;
+// const options = {
+//   style: 'currency',
+//   currency: 'VND',
+//   useGrouping: true,
+// };
+// const formatter = new Intl.NumberFormat('en-US', options);
+// console.log(formatter.format(number)); // Kết quả: €3,884,000.24
+//=====================================
+//Timer
+// const ingredients = ['olives', 'spinach'];
+// setTimeout((ing1, ing2) => console.log(`Pizza with ${ing1} and ${ing2} 🍕`), 3000, ...ingredients);
+//-------------------------------------
+// Huy timer
+// clearTimeout(pizzaTimer);
+//=====================================
+// Tao dong ho don gian
+// setInterval(() => {
+//   const now = new Date();
+//   console.log(
+//     `Bay gio la ${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}`
+//   );
+// }, 1000);
