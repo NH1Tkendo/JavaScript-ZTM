@@ -31,7 +31,7 @@
 
 ### Các cách triển khai OOP trong JavaScript
 
-[@@](/md_assets/Implement-Prototypes.png)
+![@@](/md_assets/Implement-Prototypes.png)
 
 1. **Hàm khởi tạo (Constructor Functions)**:
    - Là cách truyền thống để tạo đối tượng theo chương trình.

@@ -7,7 +7,7 @@
 
 ### Cú pháp và các thành phần của lớp
 
-[s](/md_assets/Summary.png)
+![s](/md_assets/Summary.png)
 
 #### 1. Định nghĩa lớp
 

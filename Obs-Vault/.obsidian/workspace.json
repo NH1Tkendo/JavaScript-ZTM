@@ -4,11 +4,11 @@
     "type": "split",
     "children": [
       {
-        "id": "d99559c48c98d069",
+        "id": "e0d340ffbd28bd58",
         "type": "tabs",
         "children": [
           {
-            "id": "6e7c02ebd65e12fe",
+            "id": "448b53105eb44d9a",
             "type": "leaf",
             "state": {
               "type": "graph",
@@ -161,17 +161,34 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "6e7c02ebd65e12fe",
+  "active": "448b53105eb44d9a",
   "lastOpenFiles": [
-    "moment.js.md",
-    "Section12/Operation-With-Date.md",
-    "Section12/BigInt.md",
+    "Section14-OOP/Chaining-method.md",
+    "Section14-OOP/OOP.md",
+    "Section14-OOP/Encapsulation.md",
+    "Section14-OOP/Inherit-Object.md",
+    "Section14-OOP/Inherit-class.md",
+    "Section14-OOP/Summary.md",
+    "Section14-OOP/Inherit-Function-class.md",
+    "Section14-OOP/Object.create.md",
+    "Section14-OOP/Static-method.md",
+    "Section14-OOP/Getter-Setter.md",
+    "Section14-OOP/PrototypeInherit-Object.md",
+    "Section14-OOP/PrototypeChain.md",
+    "md_assets/Chain.png.md",
+    "md_assets",
+    "Section14-OOP/Prototypes.md",
+    "Section14-OOP/Constructor-Functions.md",
+    "Section14-OOP/OOP-JS.md",
+    "Section14-OOP/OOP-Details.md",
     "Section12/Timers.md",
-    "Asynchronous JavaScript.md",
-    "Section12/Math-And-Rounding.md",
-    "Section12/DateTime.md",
+    "Section12/Remainder-operator.md",
+    "Section12/Operation-With-Date.md",
+    "Section12/Numeric-Separators.md",
     "Section12/Number-Dates-Intl-Timer.md",
-    "Number-Dates-Intl-Timer.md",
-    "Converting-and-checking-numbers.md"
+    "Section12/Math-And-Rounding.md",
+    "Section12/Internationalizing-Numbers.md",
+    "Section12/Internationalizing-Dates.md",
+    "Section15-MaptyApp/Plan.md"
   ]
 }

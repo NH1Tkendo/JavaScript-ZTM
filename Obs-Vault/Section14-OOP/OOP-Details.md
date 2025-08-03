@@ -3,7 +3,7 @@
 
 ### Khái niệm cơ bản
 
-[OOP](/md_assets/OOP-details.png)
+![OOP](/md_assets/OOP-details.png)
 
 - **Lập trình hướng đối tượng (Object-Oriented Programming - OOP)** là một mô hình lập trình dựa trên khái niệm **đối tượng (objects)**.
   - Đối tượng chứa:

@@ -8,7 +8,7 @@
 
 ### Khái niệm cơ bản
 
-[a](/md_assets/Inherit-Function.png)
+![a](/md_assets/Inherit-Function.png)
 
 - **Lớp cha (Parent Class)**: Lớp chung (ví dụ: `Person`) chứa các thuộc tính và phương thức chung.
 - **Lớp con (Child Class)**: Lớp cụ thể hơn (ví dụ: `Student`) thừa hưởng từ lớp cha và có thể bổ sung các thuộc tính/phương thức riêng.
@@ -104,7 +104,7 @@ mike.calcAge(); // Kết quả: 17
 
 ### Lưu ý quan trọng
 
-[a](/md_assets/Inherit-Good-Bad.png)
+![a](/md_assets/Inherit-Good-Bad.png)
 
 - **Tại sao cần `Object.create`?**
 

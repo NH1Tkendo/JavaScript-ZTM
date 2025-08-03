@@ -43,7 +43,7 @@ console.log(jonas.calcAge()); // 35
 
 ## Prototype Chain (Chuỗi Nguyên Mẫu)
 
-[Chain](/md_assets/Chain.png)
+![Chain](/md_assets/Chain.png)
 
 ### Khái Niệm
 
